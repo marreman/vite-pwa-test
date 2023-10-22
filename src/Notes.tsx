@@ -2,8 +2,6 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { Note, db } from "./db"
 import { useEffect, useRef } from "react"
 
-// const PLACEHOLDER_TEXT = "New note"
-
 export default function Notes() {
   const notes = useNotes()
 

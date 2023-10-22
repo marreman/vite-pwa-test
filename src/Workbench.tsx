@@ -12,25 +12,31 @@ export default function Workbench() {
 
   return (
     <>
-      <h1>PWA test</h1>
-      <h2>Storing text</h2>
+      <h1 className="text-2xl">PWA test</h1>
+      <h2 className="text-xl mt-5 mb-3">Storing text</h2>
       <p>
         {workbench && (
-          <button onClick={workbench.incrementCount}>
+          <button
+            className="border px-3 py-2 rounded-md"
+            onClick={workbench.incrementCount}
+          >
             Count is {workbench.count ?? "?"}
           </button>
         )}
       </p>
-      <h2>Storing images</h2>
+      <h2 className="text-xl mt-5 mb-3">Storing images</h2>
       <p>
         <input type="file" onChange={handleFileChange} />
       </p>
       <p>
         <img src={workbench.imageURL} style={{ maxWidth: "100%" }} />
       </p>
-      <h2>Storage information</h2>
+      <h2 className="text-xl mt-5 mb-3">Storage information</h2>
       <p>
-        <button onClick={workbench.askForPersistedStorage}>
+        <button
+          className="border px-3 py-2 rounded-md"
+          onClick={workbench.askForPersistedStorage}
+        >
           Ask for persisted storage
         </button>
       </p>
