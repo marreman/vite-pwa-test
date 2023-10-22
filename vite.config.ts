@@ -4,8 +4,8 @@ import { VitePWA } from "vite-plugin-pwa"
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/vite-pwa-test",
   build: {
-    assetsDir: "./vite-pwa-test",
     outDir: "./docs",
   },
   plugins: [
