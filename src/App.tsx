@@ -6,8 +6,8 @@ export function App() {
   const [view, setView] = useState("workbench")
 
   return (
-    <>
-      <nav>
+    <div className="p-3">
+      <nav className="space-x-2">
         <button
           className="border px-3 py-2 rounded-md"
           onClick={() => setView("workbench")}
@@ -22,6 +22,6 @@ export function App() {
         </button>
       </nav>
       {view === "workbench" ? <Workbench /> : <Notes />}
-    </>
+    </div>
   )
 }
