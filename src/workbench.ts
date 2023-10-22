@@ -2,12 +2,12 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "./db"
 import { useEffect, useState } from "react"
 
-export function useCount() {
+export function useWorkbench() {
   const [storageEstimate, setStorageEstimate] = useState<StorageEstimate>()
   const [storagePersisted, setStoragePersisted] = useState<boolean>()
   const [count] = useLiveQuery(() => db.counts.toArray()) ?? []
 
-  function increment() {
+  function incrementCount() {
     if (count?.id) {
       return db.counts.update(count.id, { ...count, amount: count.amount + 1 })
     } else {
@@ -31,12 +31,21 @@ export function useCount() {
   return {
     storageEstimate,
     storagePersisted,
-    amount: count?.amount,
-    increment,
     async askForPersistedStorage() {
       if (!(await navigator.storage.persisted())) {
         const allowed = await navigator.storage.persist()
         setStoragePersisted(allowed)
+      }
+    },
+    count: count?.amount,
+    incrementCount,
+    imageURL: count?.image && URL.createObjectURL(new Blob([count.image])),
+    async saveImage(file: File) {
+      const buffer = await file.arrayBuffer()
+      if (count?.id) {
+        return db.counts.update(count.id, { ...count, image: buffer })
+      } else {
+        return db.counts.add({ amount: 0, image: buffer })
       }
     },
   }

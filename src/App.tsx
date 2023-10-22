@@ -1,31 +1,49 @@
-import { useCount } from "./count"
+import { useWorkbench } from "./workbench"
 
 function App() {
-  const count = useCount()
+  const workbench = useWorkbench()
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const [file] = e.target.files ?? []
+    if (file) workbench.saveImage(file)
+  }
+
+  console.log(workbench.imageURL)
+
   return (
     <>
+      <h1>PWA test</h1>
+      <h2>Storing text</h2>
       <p>
-        {count && (
-          <button onClick={count.increment}>
-            Count is {count.amount ?? "?"}
+        {workbench && (
+          <button onClick={workbench.incrementCount}>
+            Count is {workbench.count ?? "?"}
           </button>
         )}
       </p>
-      <h2>Storage</h2>
+      <h2>Storing images</h2>
       <p>
-        <button onClick={count.askForPersistedStorage}>
+        <input type="file" onChange={handleFileChange} />
+      </p>
+      <p>
+        <img src={workbench.imageURL} style={{ maxWidth: "100%" }} />
+      </p>
+      <h2>Storage information</h2>
+      <p>
+        <button onClick={workbench.askForPersistedStorage}>
           Ask for persisted storage
         </button>
       </p>
       <p>
-        Persisted storage granted: {count.storagePersisted?.toString() ?? "?"}
+        Persisted storage granted:{" "}
+        <code>{workbench.storagePersisted?.toString() ?? "?"}</code>
       </p>
       <p>Persisted storage estimate:</p>
       <dl>
         <dt>Quota</dt>
-        <dd>{count.storageEstimate?.quota?.toFixed()} MiB</dd>
+        <dd>{workbench.storageEstimate?.quota?.toFixed()} MiB</dd>
         <dt>Usage</dt>
-        <dd>{count.storageEstimate?.usage?.toFixed()} MiB</dd>
+        <dd>{workbench.storageEstimate?.usage?.toFixed()} MiB</dd>
       </dl>
     </>
   )

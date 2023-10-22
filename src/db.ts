@@ -3,6 +3,7 @@ import Dexie, { Table } from "dexie"
 export interface Count {
   id?: number
   amount: number
+  image?: ArrayBuffer
 }
 
 export class Database extends Dexie {
