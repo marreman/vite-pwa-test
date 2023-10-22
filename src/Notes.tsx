@@ -1,5 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks"
 import { Note, db } from "./db"
+import { useEffect, useRef } from "react"
 
 // const PLACEHOLDER_TEXT = "New note"
 
@@ -10,21 +11,7 @@ export default function Notes() {
     <main className="pb-[50vh]">
       {notes.map((note) => (
         <div key={note.id} className="relative">
-          {note.text != null && (
-            <div
-              autoFocus={note.autofocus}
-              className="p-2 min-h-[100px] border-b outline-none"
-              contentEditable
-              dangerouslySetInnerHTML={{ __html: note.text }}
-              suppressContentEditableWarning
-              onBlur={(event) => {
-                if (!note.id) return
-                const text = event.currentTarget.innerHTML.trim()
-                if (text === "<br>") db.notes.delete(note.id)
-                else db.notes.update(note.id, { text })
-              }}
-            />
-          )}
+          {note.text != null && <TextNote {...note} />}
           {note.imageUrl && <img src={note.imageUrl} />}
           <button
             onClick={() => {
@@ -39,8 +26,13 @@ export default function Notes() {
       <div className="fixed bottom-0 w-full bg-white flex divide-x border-t">
         <button
           className="flex-1 py-4"
-          onClick={() => {
-            db.notes.add({ text: "", autofocus: true })
+          onClick={async () => {
+            await db.notes.add({ text: "", autofocus: true })
+            const allTextNotes = Array.from(
+              document.querySelectorAll("article")
+            )
+            const lastTextNote = allTextNotes[allTextNotes.length - 1]
+            lastTextNote?.focus()
           }}
         >
           New text
@@ -75,6 +67,31 @@ export default function Notes() {
         </label>
       </div>
     </main>
+  )
+}
+
+function TextNote(note: Note) {
+  const el = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (!note.text) {
+      el.current?.focus()
+    }
+  }, [])
+
+  return (
+    <article
+      ref={el}
+      className="p-2 min-h-[100px] border-b outline-none"
+      contentEditable
+      dangerouslySetInnerHTML={{ __html: note.text ?? "" }}
+      suppressContentEditableWarning
+      onBlur={(event) => {
+        if (!note.id) return
+        const text = event.currentTarget.innerHTML.trim()
+        if (text === "<br>") db.notes.delete(note.id)
+        else db.notes.update(note.id, { text })
+      }}
+    />
   )
 }
 
