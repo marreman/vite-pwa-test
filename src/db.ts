@@ -10,6 +10,8 @@ export interface Note {
   id?: number
   text?: string
   image?: ArrayBuffer
+
+  autofocus?: boolean
 }
 
 export class Database extends Dexie {
