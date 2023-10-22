@@ -1,12 +1,13 @@
 import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "./db"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export function useCount() {
-  const [persisted, setPersisted] = useState<boolean>()
+  const [storageEstimate, setStorageEstimate] = useState<StorageEstimate>()
+  const [storagePersisted, setStoragePersisted] = useState<boolean>()
   const [count] = useLiveQuery(() => db.counts.toArray()) ?? []
 
-  function incrementCount() {
+  function increment() {
     if (count?.id) {
       return db.counts.update(count.id, { ...count, amount: count.amount + 1 })
     } else {
@@ -14,15 +15,29 @@ export function useCount() {
     }
   }
 
-  return {
-    persisted,
-    amount: count?.amount,
-    increment: () => {
-      incrementCount().then(async () => {
-        const isPersisted = await navigator.storage.persisted()
-        setPersisted(isPersisted)
-        console.log(`Persisted storage granted: ${isPersisted}`)
+  useEffect(() => {
+    navigator.storage.estimate().then((estimate) => {
+      setStorageEstimate({
+        quota: (estimate.quota ?? 0) / 1024 / 1024,
+        usage: (estimate.usage ?? 0) / 1024 / 1024,
       })
+    })
+  }, [])
+
+  useEffect(() => {
+    navigator.storage.persisted().then(setStoragePersisted)
+  }, [])
+
+  return {
+    storageEstimate,
+    storagePersisted,
+    amount: count?.amount,
+    increment,
+    async askForPersistedStorage() {
+      if (!(await navigator.storage.persisted())) {
+        const allowed = await navigator.storage.persist()
+        setStoragePersisted(allowed)
+      }
     },
   }
 }
