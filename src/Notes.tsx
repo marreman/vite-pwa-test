@@ -9,7 +9,7 @@ export default function Notes() {
     <main className="pb-[50vh]">
       {notes.map((note) => (
         <div key={note.id} className="relative">
-          {note.text != null && <TextNote {...note} />}
+          {note.text != null && <TextNote note={note} />}
           {note.imageUrl && <img src={note.imageUrl} />}
           <button
             onClick={() => {
@@ -35,20 +35,6 @@ export default function Notes() {
         >
           New text
         </button>
-        {/* <div
-          className="p-2 border-b outline-none"
-          contentEditable
-          suppressContentEditableWarning
-          onFocus={(event) => (event.currentTarget.innerHTML = "")}
-          onBlur={(event) => {
-            const text = event.currentTarget.innerHTML.trim()
-            if (text === PLACEHOLDER_TEXT || text === "<br>") return
-            db.notes.add({ text })
-            event.currentTarget.innerHTML = PLACEHOLDER_TEXT
-          }}
-        >
-          {PLACEHOLDER_TEXT}
-        </div> */}
         <label htmlFor="new-image" className="flex-1 text-center py-4">
           New image
           <input
@@ -68,7 +54,7 @@ export default function Notes() {
   )
 }
 
-function TextNote(note: Note) {
+function TextNote({ note }: { note: Note }) {
   const el = useRef<HTMLElement>(null)
   useEffect(() => {
     if (!note.text) {
