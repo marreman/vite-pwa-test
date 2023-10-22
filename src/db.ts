@@ -6,13 +6,21 @@ export interface Count {
   image?: ArrayBuffer
 }
 
+export interface Note {
+  id?: number
+  text?: string
+  image?: ArrayBuffer
+}
+
 export class Database extends Dexie {
   counts!: Table<Count>
+  notes!: Table<Note>
 
   constructor() {
     super("myDatabase")
-    this.version(1).stores({
-      counts: "++id", // Primary key and indexed props
+    this.version(2).stores({
+      counts: "++id",
+      notes: "++id",
     })
   }
 }
